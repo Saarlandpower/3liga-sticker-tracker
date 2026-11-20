@@ -87,7 +87,7 @@ Platzhalter-Liste mit den Nummern 1 bis N.
 **N konfigurieren:**
 * in `assets/checklist.json` über `"placeholderCount"`,
 * alternativ, falls dort kein Wert steht, über `stickertracker.placeholderCount` in `gradle.properties`
-  (Standard: 400),
+  (Standard: 423),
 * oder jederzeit in der App: *Einstellungen → Platzhalter-Liste erzeugen*.
 
 Sobald das Heft da ist, importierst du die echte Liste unter *Einstellungen → Checkliste importieren*.
@@ -163,7 +163,7 @@ Unter *Einstellungen → Vereine bearbeiten* kannst du jeden Namen ändern und e
 
 * Der Text zum Teilen fasst fortlaufende Nummern zu Bereichen zusammen (`45-48`, `S1-S3`). Doppelte mit mehr als
   einem Ersatz erscheinen als `12 (2x)`.
-* Der QR-Code enthält eine kompakte Zeichenkette, z. B. `3LST:1|N:400|M:3,17,45-48|D:12x2,88-89,S1`
+* Der QR-Code enthält eine kompakte Zeichenkette, z. B. `3LST:1|N:423|M:3,17,45-48|D:12x2,88-89,S1`
   (`N` = Größe der Checkliste, `M` = fehlend, `D` = doppelt mit Anzahl der Ersatz-Sticker). Nutzt der Partner eine
   andere Checkliste, weist die App darauf hin.
 

@@ -25,7 +25,7 @@ val releaseKeyPassword = secret("release.keyPassword", "STICKER_KEY_PASSWORD")
 val hasReleaseSigning = listOf(releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword)
     .all { it != null }
 
-val placeholderCount = (project.findProperty("stickertracker.placeholderCount") as String?)?.toIntOrNull() ?: 400
+val placeholderCount = (project.findProperty("stickertracker.placeholderCount") as String?)?.toIntOrNull() ?: 423
 
 android {
     namespace = "de.dritteliga.stickertracker"
