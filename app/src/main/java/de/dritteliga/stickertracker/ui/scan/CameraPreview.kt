@@ -46,6 +46,14 @@ fun CameraPreview(
         }
     }
 
+    // Zuerst deklariert → wird zuletzt freigegeben (nach dem Lösen des Analyzers unten).
+    DisposableEffect(Unit) {
+        onDispose {
+            recognizer.close()
+            executor.shutdown()
+        }
+    }
+
     DisposableEffect(lifecycleOwner) {
         controller.setImageAnalysisAnalyzer(
             executor,
@@ -68,13 +76,6 @@ fun CameraPreview(
         onDispose {
             controller.clearImageAnalysisAnalyzer()
             controller.unbind()
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            recognizer.close()
-            executor.shutdown()
         }
     }
 

@@ -56,6 +56,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // ML Kit bringt große native Bibliotheken mit – für echte Handys reichen die ARM-Varianten.
+            ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
             if (hasReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
             } else {

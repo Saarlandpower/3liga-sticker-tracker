@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Alles bleibt lokal: ML Kit würde sonst Internet für Nutzungsstatistiken anfordern.
+         Das OCR-Modell ist im APK gebündelt und funktioniert komplett offline. -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+
     <application
         android:name=".StickerApp"
         android:allowBackup="true"
