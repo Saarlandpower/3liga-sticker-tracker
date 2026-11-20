@@ -147,7 +147,7 @@ und Zuordnungen erhalten.
 
 ### Vereine
 
-`checklist.json` enthält als Startwert die 20 Klubs der Saison 2025/26. Bitte gegen das Heft prüfen.
+`checklist.json` enthält als Startwert die 20 Klubs der Saison 2026/27 (alphabetisch nach Ort). Bitte gegen das Heft prüfen.
 Unter *Einstellungen → Vereine bearbeiten* kannst du jeden Namen ändern und einem Verein Nummern zuordnen, etwa
 `21-38, S3`. So lässt sich die Platzhalter-Liste schon gruppieren, bevor die echte Checkliste vorliegt.
 
