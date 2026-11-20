@@ -1,0 +1,28 @@
+{
+  "formatVersion": 1,
+  "name": "Panini 3. Liga – Platzhalter-Checkliste",
+  "placeholderCount": 400,
+  "clubs": [
+    "Alemannia Aachen",
+    "FC Erzgebirge Aue",
+    "FC Energie Cottbus",
+    "MSV Duisburg",
+    "Rot-Weiss Essen",
+    "TSV Havelse",
+    "TSG Hoffenheim II",
+    "FC Ingolstadt 04",
+    "SV Waldhof Mannheim",
+    "TSV 1860 München",
+    "VfL Osnabrück",
+    "SSV Jahn Regensburg",
+    "F.C. Hansa Rostock",
+    "1. FC Saarbrücken",
+    "1. FC Schweinfurt 05",
+    "VfB Stuttgart II",
+    "SSV Ulm 1846",
+    "SC Verl",
+    "FC Viktoria Köln",
+    "SV Wehen Wiesbaden"
+  ],
+  "stickers": []
+}
