@@ -100,7 +100,7 @@ fun AppNavigation() {
             ) { entry ->
                 AlbumScreen(
                     initialFilter = entry.arguments?.getString("filter")?.takeIf { it.isNotEmpty() },
-                    initialClub = entry.arguments?.getInt("club")?.takeIf { it >= 0 },
+                    initialClub = entry.arguments?.getInt("club")?.takeIf { it != -1 },
                     onOpenSettings = { nav.navigate(Routes.SETTINGS) },
                 )
             }

@@ -13,6 +13,7 @@ import de.dritteliga.stickertracker.domain.Sticker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -30,6 +31,13 @@ class StickerRepository @Inject constructor(
 
     val stickers: Flow<List<Sticker>> = dao.observeStickers().map { list -> list.map { it.toDomain() } }
     val clubs: Flow<List<Club>> = dao.observeClubs().map { list -> list.map { it.toDomain() } }
+
+    val collection: Flow<CollectionData> = combine(stickers, clubs) { s, c -> CollectionData(s, c) }
+
+    /** Zählt jede Nummer einmal hoch (Wiederholungen zählen mehrfach). */
+    suspend fun addNumbers(numbers: List<String>): List<CountChange> = withContext(Dispatchers.IO) {
+        numbers.mapNotNull { n -> dao.changeCount(n, +1)?.let { CountChange(n, it) } }
+    }
 
     /** Lädt beim allerersten Start die Checkliste aus assets/checklist.json. */
     suspend fun ensureSeeded() = seedMutex.withLock {
@@ -90,4 +98,14 @@ class StickerRepository @Inject constructor(
     }
 
     suspend fun resetCounts() = withContext(Dispatchers.IO) { dao.resetAllCounts() }
+}
+
+/** Ergebnis einer Zählung: neue Anzahl nach dem Hochzählen. */
+data class CountChange(val number: String, val newCount: Int) {
+    val isNew: Boolean get() = newCount == 1
+}
+
+data class CollectionData(val stickers: List<Sticker>, val clubs: List<Club>) {
+    val clubById: Map<Int, Club> = clubs.associateBy { it.id }
+    val numbers: Set<String> = stickers.mapTo(LinkedHashSet()) { it.number }
 }
