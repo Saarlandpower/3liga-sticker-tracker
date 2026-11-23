@@ -14,20 +14,30 @@ jederzeit, welche Sticker du hast, welche fehlen und welche doppelt sind. Gescan
 |---|---|
 | **Übersicht** | Fortschritt „x von N“, Prozent und Balken. Dazu die Zahl fehlender und doppelter Sticker sowie der Fortschritt pro Verein und pro Kategorie. |
 | **Album** | Alle Nummern als farbcodierte Kacheln: grau = fehlt, grün = vorhanden, orange mit Badge = doppelt. **Tippen = +1** (mit „Rückgängig“), **lange drücken** öffnet ein Detail mit +/- und Bearbeiten (Name, Verein, Kategorie). Tabs: Alle · Fehlend · Doppelte · Nach Verein · Kategorie. Dazu kommen Filter nach Verein/Kategorie und eine Suche nach Nummer, Spielername oder Verein. |
-| **Scannen** | Kamera-Vorschau mit Rahmen. Die Nummer auf der Rückseite wird per ML Kit erkannt und im Serienmodus gezählt, mit Vibration und Ton. Ein Overlay zeigt „#125 – NEU“ (grün) oder „#125 – doppelt (jetzt 3x)“ (orange). Dazu gibt es eine Sitzungsliste mit Rückgängig pro Eintrag, Pause und Taschenlampe. Als Fallback dient ein Nummernblock. |
+| **Scannen** | Kamera-Vorschau mit Rahmen. Die Nummer auf der Rückseite wird per ML Kit erkannt und auf Knopfdruck gezählt (optional automatisch im Serienmodus), mit Vibration und Ton. Ein Overlay zeigt „#125 – NEU“ (grün) oder „#125 – doppelt (jetzt 3x)“ (orange). Dazu gibt es eine Sitzungsliste mit Rückgängig pro Eintrag und Taschenlampe. Als Fallback dient ein Nummernblock. |
 | **Tauschen** | „Tauschliste teilen“ über das Android-Share-Sheet, z. B. `Fehlen (6): 3, 17, 45-48` / `Doppelt (5): 12 (2x), 88-89, S1`. Mit dem eigenen QR-Code scannt ein zweites Handy deine Liste und sieht sofort die passenden Tauschpaare. Der Tausch lässt sich auf Wunsch direkt buchen. |
 | **Einstellungen** | Checkliste importieren (JSON/CSV) oder eine Platzhalter-Liste 1…N erzeugen. Außerdem: Vereine umbenennen und ihnen Nummern zuordnen, den Bestand als JSON exportieren/importieren, Ton/Vibration und Design einstellen. |
 
 ### Scan-Logik
+
+**Modus „Auslöser“ (Standard):** Gezählt wird nur, wenn du auslöst – über den runden Knopf oder per Tipp ins Kamerabild.
+* Schon vor dem Auslösen zeigt die App die stabil erkannte Nummer an („Erkannt: #125 – jetzt auslösen“, Rahmen grün).
+* Nach dem Auslösen wertet sie ca. 0,7 s lang mehrere Bilder aus (mindestens 3) und zählt nur bei eindeutiger
+  Mehrheit. Bei widersprüchlichen Lesungen (z. B. „125“ und „126“) oder ohne Treffer wird nichts gezählt, sondern
+  ein Hinweis angezeigt.
+* Mehrfaches Tippen während der Auswertung wird ignoriert.
+
+**Modus „Automatisch“ (Serienmodus):** Umschalten über das Symbol oben rechts im Scan-Screen oder in den Einstellungen.
+* Eine Nummer muss in drei Bildern innerhalb von 1,5 s erkannt werden.
+* Danach wird dieselbe Nummer ignoriert, solange sie im Bild bleibt, und noch 3 s lang. Eine andere Nummer zählt sofort.
+
+**In beiden Modi:**
 * Akzeptiert werden nur Nummern, die in der Checkliste stehen.
 * Typische OCR-Verwechslungen werden korrigiert: `I25`/`l25`/`|25` → `125`, `O` → `0`, `S` → `5`, `Z` → `2`,
   `B` → `8`, und es gibt weitere. Ein exakter Treffer gewinnt immer, z. B. bleibt `S1` erhalten, wenn es in der Liste steht.
 * Stehen mehrere Zahlen im Bild, zählt die plausibelste: Sie muss im Rahmen liegen, die größte Schrift und die Nähe zur Mitte geben den Ausschlag.
-* Eine Nummer muss in zwei Bildern innerhalb von 1 s erkannt werden, das filtert Fehllesungen heraus.
-* Sperre gegen Doppelzählung: Dieselbe Nummer wird ignoriert, solange sie im Bild bleibt, und danach noch 2 s lang.
-  Hast du denselben Sticker zweimal, nimm ihn kurz aus dem Bild. Eine andere Nummer zählt sofort.
 
-Die Logik liegt Android-frei in `domain/` und ist mit Unit-Tests abgedeckt (`OcrNumberParser`, `ScanGate`).
+Die Logik liegt Android-frei in `domain/` und ist mit Unit-Tests abgedeckt (`OcrNumberParser`, `ScanVote`, `ScanGate`).
 
 ## Bauen
 

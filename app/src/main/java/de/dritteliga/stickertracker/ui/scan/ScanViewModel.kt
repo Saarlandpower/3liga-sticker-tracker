@@ -2,11 +2,14 @@ package de.dritteliga.stickertracker.ui.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.dritteliga.stickertracker.data.ScanMode
+import de.dritteliga.stickertracker.data.SettingsStore
 import de.dritteliga.stickertracker.data.StickerRepository
 import de.dritteliga.stickertracker.domain.OcrBox
 import de.dritteliga.stickertracker.domain.OcrNumberParser
 import de.dritteliga.stickertracker.domain.OcrToken
 import de.dritteliga.stickertracker.domain.ScanGate
+import de.dritteliga.stickertracker.domain.ScanVote
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -31,13 +34,22 @@ data class ScanEntry(
     val label: String get() = if (isNew) "#$number – NEU" else "#$number – doppelt (jetzt ${newCount}x)"
 }
 
+/** Hinweis nach einem Auslösen, das nicht gezählt hat. */
+data class ScanHint(val id: Long, val text: String)
+
 @HiltViewModel
 class ScanViewModel @Inject constructor(
     private val repository: StickerRepository,
     private val feedback: ScanFeedback,
+    private val settings: SettingsStore,
 ) : ViewModel() {
-    private val gate = ScanGate(requiredHits = 2, stabilityWindowMs = 1000, cooldownMs = 2000)
+    // Automatik: deutlich vorsichtiger als zuvor (3 Treffer, 3 s Sperre)
+    private val gate = ScanGate(requiredHits = 3, stabilityWindowMs = 1500, cooldownMs = 3000)
     private val ids = AtomicLong()
+    private val lock = Any()
+
+    val mode: StateFlow<ScanMode> = settings.settings.map { it.scanMode }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, settings.settings.value.scanMode)
 
     val knownNumbers: StateFlow<Set<String>> = repository.stickers
         .map { list -> list.mapTo(HashSet()) { it.number } as Set<String> }
@@ -50,14 +62,31 @@ class ScanViewModel @Inject constructor(
     val overlay: StateFlow<ScanEntry?> = _overlay.asStateFlow()
     private var overlayJob: Job? = null
 
-    /** Zuletzt im Rahmen gesehene (noch nicht unbedingt gezählte) Nummer – als Live-Hinweis. */
+    private val _hint = MutableStateFlow<ScanHint?>(null)
+    val hint: StateFlow<ScanHint?> = _hint.asStateFlow()
+    private var hintJob: Job? = null
+
+    /** Stabil erkannte Nummer im Rahmen (Mehrheit der letzten Bilder) – Live-Vorschau. */
     private val _live = MutableStateFlow<String?>(null)
     val live: StateFlow<String?> = _live.asStateFlow()
+    private val recent = ArrayDeque<String?>()
 
     private val _paused = MutableStateFlow(false)
     val paused: StateFlow<Boolean> = _paused.asStateFlow()
 
+    /** true, während nach dem Auslösen Bilder gesammelt werden. */
+    private val _capturing = MutableStateFlow(false)
+    val capturing: StateFlow<Boolean> = _capturing.asStateFlow()
+    private var captureSamples: MutableList<String?>? = null
+    private var captureMinEnd = 0L
+    private var captureJob: Job? = null
+
     @Volatile var frame: OcrBox? = null
+
+    fun setMode(mode: ScanMode) {
+        settings.update { it.copy(scanMode = mode) }
+        gate.reset()
+    }
 
     fun togglePause() {
         _paused.update { !it }
@@ -67,10 +96,56 @@ class ScanViewModel @Inject constructor(
     /** Wird vom Kamera-Analyzer (Hintergrund-Thread) für jedes ausgewertete Bild aufgerufen. */
     fun onTextFrame(tokens: List<OcrToken>, nowMs: Long) {
         if (_paused.value) return
-        val match = OcrNumberParser.pickBest(tokens, frame, knownNumbers.value)
-        _live.value = match?.number
-        val toCount = gate.onFrame(match?.number, nowMs) ?: return
-        viewModelScope.launch { count(toCount, manual = false) }
+        val number = OcrNumberParser.pickBest(tokens, frame, knownNumbers.value)?.number
+
+        var finishCapture = false
+        synchronized(lock) {
+            recent.addLast(number)
+            while (recent.size > LIVE_FRAMES) recent.removeFirst()
+            _live.value = ScanVote.stable(recent.toList())
+
+            captureSamples?.let { samples ->
+                samples += number
+                if (nowMs >= captureMinEnd && samples.size >= CAPTURE_MIN_FRAMES) finishCapture = true
+            }
+        }
+        if (finishCapture) finishCapture()
+
+        if (mode.value == ScanMode.AUTOMATISCH) {
+            val toCount = gate.onFrame(number, nowMs) ?: return
+            viewModelScope.launch { count(toCount, manual = false) }
+        }
+    }
+
+    /** Manuelles Auslösen: sammelt kurz Bilder und zählt nur bei eindeutiger Mehrheit. */
+    fun trigger() {
+        if (_paused.value) return
+        synchronized(lock) {
+            if (captureSamples != null) return // läuft bereits – Doppeltippen ignorieren
+            captureSamples = mutableListOf()
+            captureMinEnd = System.currentTimeMillis() + CAPTURE_MIN_MS
+        }
+        _capturing.value = true
+        captureJob = viewModelScope.launch {
+            delay(CAPTURE_MAX_MS) // Fallback, falls zu wenige Bilder ankommen
+            finishCapture()
+        }
+    }
+
+    private fun finishCapture() {
+        val samples = synchronized(lock) {
+            captureSamples.also { captureSamples = null }
+        } ?: return
+        captureJob?.cancel()
+        _capturing.value = false
+        when (val r = ScanVote.decide(samples)) {
+            is ScanVote.Result.Sure -> viewModelScope.launch { count(r.number, manual = false) }
+            is ScanVote.Result.Unsure -> showHint(
+                if (r.best != null) "Nicht eindeutig (#${r.best}?) – Sticker ruhig halten und nochmal auslösen"
+                else "Nicht eindeutig – nochmal auslösen"
+            )
+            ScanVote.Result.Nothing -> showHint("Keine Nummer erkannt – Rückseite mit Nummer in den Rahmen halten")
+        }
     }
 
     fun addManual(numbers: List<String>) {
@@ -82,6 +157,7 @@ class ScanViewModel @Inject constructor(
         val entry = ScanEntry(ids.incrementAndGet(), number, newCount, manual)
         _session.update { listOf(entry) + it }
         feedback.play(entry.isNew)
+        _hint.value = null
         showOverlay(entry)
     }
 
@@ -91,6 +167,16 @@ class ScanViewModel @Inject constructor(
         overlayJob = viewModelScope.launch {
             delay(1800)
             _overlay.value = null
+        }
+    }
+
+    private fun showHint(text: String) {
+        val h = ScanHint(ids.incrementAndGet(), text)
+        _hint.value = h
+        hintJob?.cancel()
+        hintJob = viewModelScope.launch {
+            delay(2500)
+            if (_hint.value?.id == h.id) _hint.value = null
         }
     }
 
@@ -109,5 +195,12 @@ class ScanViewModel @Inject constructor(
 
     override fun onCleared() {
         feedback.release()
+    }
+
+    private companion object {
+        const val LIVE_FRAMES = 6
+        const val CAPTURE_MIN_MS = 700L
+        const val CAPTURE_MIN_FRAMES = 3
+        const val CAPTURE_MAX_MS = 2000L
     }
 }

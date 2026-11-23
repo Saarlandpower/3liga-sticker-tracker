@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.dritteliga.stickertracker.BuildConfig
+import de.dritteliga.stickertracker.data.ScanMode
 import de.dritteliga.stickertracker.data.ThemeMode
 import de.dritteliga.stickertracker.ui.components.AppScaffold
 
@@ -120,6 +121,22 @@ fun SettingsScreen(
 
             HorizontalDivider(Modifier.padding(top = 8.dp))
             SectionTitle("Scannen")
+            Row(Modifier.padding(horizontal = 16.dp)) {
+                ScanMode.entries.forEach { m ->
+                    FilterChip(
+                        selected = settings.scanMode == m,
+                        onClick = { vm.updateSettings { it.copy(scanMode = m) } },
+                        label = { Text(m.label) },
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                }
+            }
+            Text(
+                settings.scanMode.description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            )
             SwitchRow("Ton bei Treffer", settings.sound) { v -> vm.updateSettings { it.copy(sound = v) } }
             SwitchRow("Vibration bei Treffer", settings.vibration) { v -> vm.updateSettings { it.copy(vibration = v) } }
 
