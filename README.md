@@ -1,4 +1,4 @@
-# 3. Liga Sticker-Tracker
+# Sticker-Tracker
 
 Native Android-App, mit der du deine Sticker der Panini-Kollektion zur 3. Liga erfasst. Die App zeigt dir
 jederzeit, welche Sticker du hast, welche fehlen und welche doppelt sind. Gescannt wird mit der Handykamera.
@@ -7,6 +7,10 @@ jederzeit, welche Sticker du hast, welche fehlen und welche doppelt sind. Gescan
 * CameraX + Google ML Kit Text Recognition (on-device, offline) · ZXing für QR-Codes
 * minSdk 26, target/compileSdk 36
 * Kein Login, keine Internetpflicht, keine Internet-Berechtigung. Alle Daten bleiben auf dem Gerät.
+* Paket-ID: `de.saarlandpower.stickertracker`
+
+> Inoffizielle Fan-App. Keine Verbindung zu Panini, dem DFB oder den Vereinen. Alle Marken- und Vereinsnamen gehören
+> ihren jeweiligen Inhabern.
 
 ## Funktionen
 
@@ -16,7 +20,7 @@ jederzeit, welche Sticker du hast, welche fehlen und welche doppelt sind. Gescan
 | **Album** | Alle Nummern als farbcodierte Kacheln: grau = fehlt, grün = vorhanden, orange mit Badge = doppelt. **Tippen = +1** (mit „Rückgängig“), **lange drücken** öffnet ein Detail mit +/- und Bearbeiten (Name, Verein, Kategorie). Tabs: Alle · Fehlend · Doppelte · Nach Verein · Kategorie. Dazu kommen Filter nach Verein/Kategorie und eine Suche nach Nummer, Spielername oder Verein. |
 | **Scannen** | Kamera-Vorschau mit Rahmen. Die Nummer auf der Rückseite wird per ML Kit erkannt und auf Knopfdruck gezählt (optional automatisch im Serienmodus), mit Vibration und Ton. Ein Overlay zeigt „#125 – NEU“ (grün) oder „#125 – doppelt (jetzt 3x)“ (orange). Dazu gibt es eine Sitzungsliste mit Rückgängig pro Eintrag und Taschenlampe. Als Fallback dient ein Nummernblock. |
 | **Tauschen** | „Tauschliste teilen“ über das Android-Share-Sheet, z. B. `Fehlen (6): 3, 17, 45-48` / `Doppelt (5): 12 (2x), 88-89, S1`. Mit dem eigenen QR-Code scannt ein zweites Handy deine Liste und sieht sofort die passenden Tauschpaare. Der Tausch lässt sich auf Wunsch direkt buchen. |
-| **Einstellungen** | Checkliste importieren (JSON/CSV) oder eine Platzhalter-Liste 1…N erzeugen. Außerdem: Vereine umbenennen und ihnen Nummern zuordnen, den Bestand als JSON exportieren/importieren, Ton/Vibration, Hell/Dunkel und das Farbschema (Standard oder „1. FC Saarbrücken“ in Blau-Schwarz-Gelb) einstellen. |
+| **Einstellungen** | Checkliste importieren (JSON/CSV) oder eine Platzhalter-Liste 1…N erzeugen. Außerdem: Vereine umbenennen und ihnen Nummern zuordnen, den Bestand als JSON exportieren/importieren, Ton/Vibration, Hell/Dunkel und das Farbschema (Standard oder Blau-Schwarz-Gelb) einstellen. |
 
 ### Scan-Logik
 
@@ -88,6 +92,29 @@ export STICKER_KEY_PASSWORD=…
 ```
 
 Fehlen die Angaben, baut `assembleRelease` trotzdem und erzeugt `app-release-unsigned.apk` (mit Warnung im Log).
+
+### Release per GitHub (Play Store)
+
+Die Action `.github/workflows/release.yml` baut beim Pushen eines Tags wie `v1.0.0` ein signiertes **App Bundle**
+(`.aab`, für den Play Store) und ein **APK** und hängt beide an einen GitHub-Release.
+Die Versionsnummer kommt aus dem Tag: `v1.2.3` → versionName `1.2.3`, versionCode `10203`.
+
+Einmalig unter *Settings → Secrets and variables → Actions* anlegen:
+
+| Secret | Inhalt |
+|---|---|
+| `STICKER_KEYSTORE_BASE64` | Upload-Keystore als Base64: `base64 -w0 sticker-tracker.jks` |
+| `STICKER_KEYSTORE_PASSWORD` | Keystore-Passwort |
+| `STICKER_KEY_ALIAS` | Alias des Schlüssels |
+| `STICKER_KEY_PASSWORD` | Passwort des Schlüssels |
+
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+Lokal geht dasselbe mit `./gradlew bundleRelease -PversionCode=10000 -PversionName=1.0.0`.
+Store-Texte, Grafiken und die Antworten für die Play Console liegen unter `store/`, die Datenschutzerklärung unter
+`docs/datenschutz.md`.
 
 ## Checkliste
 

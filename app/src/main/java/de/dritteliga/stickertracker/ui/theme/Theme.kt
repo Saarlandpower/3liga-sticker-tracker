@@ -56,7 +56,7 @@ val LocalProgressColors = staticCompositionLocalOf {
     ProgressColors(bar = StatusColors.Owned, barComplete = StatusColors.Duplicate, cardTrack = null, listTrack = null)
 }
 
-/** Vereinsfarben des 1. FC Saarbrücken: Blau, Schwarz, Gelb. */
+/** Farbschema Blau-Schwarz-Gelb. */
 object FcsColors {
     val Blue = Color(0xFF0057B8)
     val BlueLight = Color(0xFF5C9DFF)

@@ -13,7 +13,7 @@ enum class ThemeMode(val label: String) { SYSTEM("System"), DUNKEL("Dunkel"), HE
 /** Farbschema der App – unabhängig von Hell/Dunkel. */
 enum class ColorTheme(val label: String) {
     STANDARD("Standard"),
-    FCS("1. FC Saarbrücken"),
+    FCS("Blau-Schwarz-Gelb"),
 }
 
 enum class ScanMode(val label: String, val description: String) {

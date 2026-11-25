@@ -186,7 +186,9 @@ fun SettingsScreen(
                 showResetDialog = true
             }
             Text(
-                "Version ${BuildConfig.VERSION_NAME} · alle Daten bleiben auf diesem Gerät",
+                "Version ${BuildConfig.VERSION_NAME} · alle Daten bleiben auf diesem Gerät\n\n" +
+                    "Inoffizielle Fan-App. Keine Verbindung zu Panini, dem DFB oder den Vereinen. " +
+                    "Alle Marken- und Vereinsnamen gehören ihren jeweiligen Inhabern.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(16.dp),

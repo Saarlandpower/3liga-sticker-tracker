@@ -32,11 +32,13 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "de.dritteliga.stickertracker"
+        // Paket-ID im Play Store – nach dem ersten Upload nicht mehr änderbar
+        applicationId = "de.saarlandpower.stickertracker"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        // Für Store-Releases per -PversionCode=… / -PversionName=… (GitHub-Action) überschreibbar
+        versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 1
+        versionName = (project.findProperty("versionName") as String?) ?: "1.0.0"
         buildConfigField("int", "PLACEHOLDER_COUNT", placeholderCount.toString())
     }
 
