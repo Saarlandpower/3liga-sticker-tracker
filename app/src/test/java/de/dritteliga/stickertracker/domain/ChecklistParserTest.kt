@@ -92,5 +92,7 @@ class ChecklistParserTest {
         assertEquals(Category.MANNSCHAFT, Category.parse("Teamfoto"))
         assertEquals(Category.SPIELER, Category.parse(null))
         assertEquals(Category.SPIELER, Category.parse("unbekannt"))
+        assertEquals(Category.TRAINER, Category.parse("Trainer"))
+        assertEquals(Category.TRAINER, Category.parse("coach"))
     }
 }

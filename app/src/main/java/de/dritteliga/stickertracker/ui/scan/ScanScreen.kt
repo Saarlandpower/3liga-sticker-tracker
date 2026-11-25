@@ -16,6 +16,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import de.dritteliga.stickertracker.data.ScanMode
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -109,6 +118,9 @@ fun ScanScreen(vm: ScanViewModel = hiltViewModel()) {
     val overlay by vm.overlay.collectAsStateWithLifecycle()
     val live by vm.live.collectAsStateWithLifecycle()
     val paused by vm.paused.collectAsStateWithLifecycle()
+    val mode by vm.mode.collectAsStateWithLifecycle()
+    val capturing by vm.capturing.collectAsStateWithLifecycle()
+    val hint by vm.hint.collectAsStateWithLifecycle()
     val known by vm.knownNumbers.collectAsStateWithLifecycle()
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -127,6 +139,18 @@ fun ScanScreen(vm: ScanViewModel = hiltViewModel()) {
     AppScaffold(
         title = "Scannen",
         actions = {
+            IconButton(onClick = {
+                vm.setMode(if (mode == ScanMode.MANUELL) ScanMode.AUTOMATISCH else ScanMode.MANUELL)
+            }) {
+                Icon(
+                    if (mode == ScanMode.MANUELL) Icons.Filled.TouchApp else Icons.Filled.Autorenew,
+                    contentDescription = if (mode == ScanMode.MANUELL) {
+                        "Modus: Auslöser – auf Automatik umschalten"
+                    } else {
+                        "Modus: Automatik – auf Auslöser umschalten"
+                    },
+                )
+            }
             if (hasPermission && torchAvailable) {
                 IconButton(onClick = { torchOn = !torchOn }) {
                     Icon(
@@ -148,9 +172,11 @@ fun ScanScreen(vm: ScanViewModel = hiltViewModel()) {
                 when {
                     hasPermission && cameraError == null -> CameraArea(
                         vm = vm,
+                        mode = mode,
                         torchOn = torchOn,
                         paused = paused,
                         live = live,
+                        capturing = capturing,
                         onTorchAvailable = { torchAvailable = it },
                         onError = { cameraError = it },
                     )
@@ -174,10 +200,12 @@ fun ScanScreen(vm: ScanViewModel = hiltViewModel()) {
                 }
 
                 ResultOverlay(overlay, Modifier.align(Alignment.TopCenter).padding(top = 16.dp))
+                HintOverlay(hint, Modifier.align(Alignment.TopCenter).padding(top = 16.dp, start = 16.dp, end = 16.dp))
             }
 
             SessionList(
                 session = session,
+                mode = mode,
                 onUndo = vm::undo,
                 onClear = vm::clearSession,
                 modifier = Modifier.weight(0.4f),
@@ -225,14 +253,21 @@ private fun ResultOverlay(overlay: ScanEntry?, modifier: Modifier) {
 @Composable
 private fun CameraArea(
     vm: ScanViewModel,
+    mode: ScanMode,
     torchOn: Boolean,
     paused: Boolean,
     live: String?,
+    capturing: Boolean,
     onTorchAvailable: (Boolean) -> Unit,
     onError: (String) -> Unit,
 ) {
     var size by remember { mutableStateOf(IntSize.Zero) }
-    Box(Modifier.fillMaxSize().onSizeChanged { size = it; vm.frame = scanFrame(it) }) {
+    val manual = mode == ScanMode.MANUELL
+    Box(
+        Modifier
+            .fillMaxSize()
+            .onSizeChanged { size = it; vm.frame = scanFrame(it) },
+    ) {
         CameraPreview(
             torchOn = torchOn,
             onTorchAvailable = onTorchAvailable,
@@ -240,8 +275,21 @@ private fun CameraArea(
             onError = onError,
             modifier = Modifier.fillMaxSize(),
         )
+        if (manual) {
+            // Eigene Tipp-Fläche über der Vorschau: Tipp ins Kamerabild löst aus (große Trefferfläche)
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClickLabel = "Auslösen",
+                    ) { vm.trigger() },
+            )
+        }
         val frameColor = when {
             paused -> Color.Gray
+            capturing -> StatusColors.Duplicate
             live != null -> StatusColors.Owned
             else -> Color.White
         }
@@ -258,29 +306,79 @@ private fun CameraArea(
                 topLeft = Offset(f.left, f.top),
                 size = Size(f.width, f.height),
                 cornerRadius = radius,
-                style = Stroke(width = 6f),
+                style = Stroke(width = if (capturing) 10f else 6f),
             )
         }
-        Text(
-            when {
-                paused -> "Pausiert"
-                live != null -> "Erkannt: #$live"
-                else -> "Rückseite mit Nummer in den Rahmen halten"
-            },
-            color = Color.White,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 12.dp)
-                .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(12.dp))
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-        )
-        FilledTonalIconButton(
-            onClick = vm::togglePause,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
+
+        Column(
+            Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Icon(if (paused) Icons.Filled.PlayArrow else Icons.Filled.Pause, if (paused) "Scannen fortsetzen" else "Scannen pausieren")
+            Text(
+                when {
+                    paused -> "Pausiert"
+                    capturing -> "Stillhalten …"
+                    live != null && manual -> "Erkannt: #$live – jetzt auslösen"
+                    live != null -> "Erkannt: #$live"
+                    else -> "Rückseite mit Nummer in den Rahmen halten"
+                },
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+            )
+            if (manual) {
+                Spacer(Modifier.height(10.dp))
+                ShutterButton(capturing = capturing, ready = live != null, onClick = vm::trigger)
+            }
+        }
+        if (!manual) {
+            FilledTonalIconButton(
+                onClick = vm::togglePause,
+                modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
+            ) {
+                Icon(if (paused) Icons.Filled.PlayArrow else Icons.Filled.Pause, if (paused) "Scannen fortsetzen" else "Scannen pausieren")
+            }
+        }
+    }
+}
+
+/** Runder Auslöser wie in einer Kamera-App. */
+@Composable
+private fun ShutterButton(capturing: Boolean, ready: Boolean, onClick: () -> Unit) {
+    Box(
+        Modifier
+            .size(76.dp)
+            .border(4.dp, Color.White, CircleShape)
+            .padding(7.dp)
+            .background(if (ready) StatusColors.Owned else Color.White.copy(alpha = 0.85f), CircleShape)
+            .clickable(enabled = !capturing, onClickLabel = "Sticker zählen", onClick = onClick)
+            .semantics { contentDescription = "Auslösen – Sticker zählen" },
+        contentAlignment = Alignment.Center,
+    ) {
+        if (capturing) {
+            CircularProgressIndicator(Modifier.size(36.dp), color = Color.White, strokeWidth = 4.dp)
+        }
+    }
+}
+
+/** Hinweis, wenn ein Auslösen nicht gezählt hat. */
+@Composable
+private fun HintOverlay(hint: ScanHint?, modifier: Modifier) {
+    AnimatedVisibility(visible = hint != null, enter = fadeIn(), exit = fadeOut(), modifier = modifier) {
+        val h = hint
+        if (h != null) {
+            Surface(color = Color(0xFF424242), shape = RoundedCornerShape(16.dp), shadowElevation = 6.dp) {
+                Text(
+                    h.text,
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                )
+            }
         }
     }
 }
@@ -288,6 +386,7 @@ private fun CameraArea(
 @Composable
 private fun SessionList(
     session: List<ScanEntry>,
+    mode: ScanMode,
     onUndo: (ScanEntry) -> Unit,
     onClear: () -> Unit,
     modifier: Modifier,
@@ -304,8 +403,13 @@ private fun SessionList(
         }
         if (session.isEmpty()) {
             Text(
-                "Halte Sticker nacheinander vor die Kamera – jede erkannte Nummer wird gezählt. " +
-                    "Derselbe Sticker wird nicht doppelt gezählt, solange er im Bild bleibt.",
+                if (mode == ScanMode.MANUELL) {
+                    "Sticker-Rückseite in den Rahmen halten und auslösen (Knopf oder Tipp ins Bild). " +
+                        "Gezählt wird nur, wenn die Nummer über mehrere Bilder eindeutig erkannt wurde."
+                } else {
+                    "Automatik: Halte Sticker nacheinander vor die Kamera – jede stabil erkannte Nummer wird gezählt. " +
+                        "Derselbe Sticker wird nicht doppelt gezählt, solange er im Bild bleibt."
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(16.dp),
