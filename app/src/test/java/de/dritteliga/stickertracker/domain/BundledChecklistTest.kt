@@ -35,4 +35,11 @@ class BundledChecklistTest {
         assertEquals("FC Würzburger Kickers", club["403"])
         assertEquals("Die Stars der 3. Liga", club["404"])
     }
+
+    @Test fun lastStickerOfEachClubIsTheCoach() {
+        val coaches = parsed.stickers.filter { it.category == Category.TRAINER }
+        assertEquals((61..403 step 18).map { it.toString() }, coaches.map { it.number })
+        assertEquals(20 * 17, parsed.stickers.count { it.category == Category.SPIELER })
+        assertEquals(63, parsed.stickers.count { it.category == Category.SONDER })
+    }
 }

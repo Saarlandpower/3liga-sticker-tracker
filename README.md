@@ -93,7 +93,8 @@ Fehlen die Angaben, baut `assembleRelease` trotzdem und erzeugt `app-release-uns
 
 Beim ersten Start lädt die App `app/src/main/assets/checklist.json`. Sie enthält die 423 Nummern der Saison 2026/27,
 zugeordnet zu Intro (1–3), „Heimat der 3. Liga“ (4–43), den 20 Vereinen mit je 18 Stickern (44–403) und „Die Stars
-der 3. Liga“ (404–423). Spielernamen sind noch nicht hinterlegt.
+der 3. Liga“ (404–423). Die letzte Karte jedes Vereins ist der Trainer; Wappen und Stadien stecken in „Heimat der
+3. Liga“. Spielernamen sind noch nicht hinterlegt.
 
 Ist keine Stickerliste hinterlegt, erzeugt die App eine Platzhalter-Liste mit den Nummern 1 bis N.
 
@@ -137,7 +138,7 @@ die in der neuen Liste fehlen, werden in der Vorschau rot aufgeführt.
 | `stickers[].number` | **ja** | Stickernummer als String: `"1"`, `"125"`, `"S1"`, `"FW3"`. Groß-/Kleinschreibung und führende Nullen sind egal |
 | `stickers[].name` | nein | Spielername oder Titel |
 | `stickers[].club` | nein | Vereinsname (alternativ `clubIndex` = Index in `clubs`) |
-| `stickers[].category` | nein | `Spieler` (Standard), `Wappen`, `Mannschaftsfoto`, `Sonder`/`Glitzer` |
+| `stickers[].category` | nein | `Spieler` (Standard), `Trainer`, `Wappen`, `Mannschaftsfoto`, `Sonder`/`Glitzer` |
 
 Die Reihenfolge in `stickers` ist die Reihenfolge im Album. Erlaubt ist auch eine reine Liste wie `["1", "2", "S1"]`.
 Deutsche Feldnamen (`nummer`, `verein`, `kategorie`) werden ebenfalls verstanden.

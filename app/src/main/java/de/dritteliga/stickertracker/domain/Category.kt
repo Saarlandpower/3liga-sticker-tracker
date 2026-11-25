@@ -3,6 +3,7 @@ package de.dritteliga.stickertracker.domain
 /** Kategorie eines Stickers. [label] ist der deutsche Anzeigename. */
 enum class Category(val label: String) {
     SPIELER("Spieler"),
+    TRAINER("Trainer"),
     WAPPEN("Wappen"),
     MANNSCHAFT("Mannschaftsfoto"),
     SONDER("Sonder/Glitzer");
@@ -14,6 +15,7 @@ enum class Category(val label: String) {
             return when {
                 v.isEmpty() -> SPIELER
                 v.startsWith("spiel") || v == "player" || v == "spieler" -> SPIELER
+                v.startsWith("trainer") || v == "coach" || v == "headcoach" -> TRAINER
                 v.startsWith("wappen") || v == "badge" || v == "logo" || v == "crest" -> WAPPEN
                 v.startsWith("mannschaft") || v.startsWith("team") -> MANNSCHAFT
                 v.startsWith("sonder") || v.startsWith("glitzer") || v.startsWith("special") ||
