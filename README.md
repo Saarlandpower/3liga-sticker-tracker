@@ -91,8 +91,11 @@ Fehlen die Angaben, baut `assembleRelease` trotzdem und erzeugt `app-release-uns
 
 ## Checkliste
 
-Beim ersten Start lädt die App `app/src/main/assets/checklist.json`. Solange die echte Liste fehlt, ist das eine
-Platzhalter-Liste mit den Nummern 1 bis N.
+Beim ersten Start lädt die App `app/src/main/assets/checklist.json`. Sie enthält die 423 Nummern der Saison 2026/27,
+zugeordnet zu Intro (1–3), „Heimat der 3. Liga“ (4–43), den 20 Vereinen mit je 18 Stickern (44–403) und „Die Stars
+der 3. Liga“ (404–423). Spielernamen sind noch nicht hinterlegt.
+
+Ist keine Stickerliste hinterlegt, erzeugt die App eine Platzhalter-Liste mit den Nummern 1 bis N.
 
 **N konfigurieren:**
 * in `assets/checklist.json` über `"placeholderCount"`,
@@ -100,7 +103,7 @@ Platzhalter-Liste mit den Nummern 1 bis N.
   (Standard: 423),
 * oder jederzeit in der App: *Einstellungen → Platzhalter-Liste erzeugen*.
 
-Sobald das Heft da ist, importierst du die echte Liste unter *Einstellungen → Checkliste importieren*.
+Eine eigene oder ergänzte Liste importierst du unter *Einstellungen → Checkliste importieren*.
 Vor dem Übernehmen zeigt eine Vorschau, wie viele Sticker und Vereine die Liste hat und wie viele Anzahlen erhalten bleiben.
 **Vorhandene Anzahlen bleiben für jede Nummer erhalten**, die auch in der neuen Liste vorkommt. Nummern mit Bestand,
 die in der neuen Liste fehlen, werden in der Vorschau rot aufgeführt.
@@ -157,7 +160,8 @@ und Zuordnungen erhalten.
 
 ### Vereine
 
-`checklist.json` enthält als Startwert die 20 Klubs der Saison 2026/27 (alphabetisch nach Ort). Bitte gegen das Heft prüfen.
+`checklist.json` enthält die 20 Klubs der Saison 2026/27 in Album-Reihenfolge, dazu die Sondergruppen Intro,
+„Heimat der 3. Liga“ und „Die Stars der 3. Liga“.
 Unter *Einstellungen → Vereine bearbeiten* kannst du jeden Namen ändern und einem Verein Nummern zuordnen, etwa
 `21-38, S3`. So lässt sich die Platzhalter-Liste schon gruppieren, bevor die echte Checkliste vorliegt.
 
