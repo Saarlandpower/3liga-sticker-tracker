@@ -4,10 +4,8 @@ Stand: November 2026
 
 ## Verantwortlicher
 
-<!-- TODO vor Veröffentlichung ausfüllen -->
-[Vorname Nachname]
-[Anschrift oder ladungsfähige Kontaktmöglichkeit]
-E-Mail: [Kontakt-E-Mail-Adresse]
+Mathias Kasper  
+E-Mail: [mail@mathiaskasper.de](mailto:mail@mathiaskasper.de)
 
 ## Kurzfassung
 
