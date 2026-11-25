@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Zwei übereinanderliegende Sticker mit einer "3" -->
+<!-- Zwei gestapelte Sticker-Karten mit Haken. Sichtbarer Bereich: 66 × 66 dp in der Mitte. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
+    <!-- hintere Karte (gelb) -->
+    <group android:pivotX="54" android:pivotY="54" android:rotation="-12">
+        <path android:fillColor="#FFFFD400"
+            android:pathData="M40,30h26a4,4 0,0 1,4 4v38a4,4 0,0 1,-4 4h-26a4,4 0,0 1,-4 -4v-38a4,4 0,0 1,4 -4z" />
+    </group>
+    <!-- vordere Karte (weiß) mit Linien -->
+    <group android:pivotX="54" android:pivotY="54" android:rotation="6">
+        <path android:fillColor="#FFFFFFFF"
+            android:pathData="M42,31h26a4,4 0,0 1,4 4v38a4,4 0,0 1,-4 4h-26a4,4 0,0 1,-4 -4v-38a4,4 0,0 1,4 -4z" />
+        <path android:fillColor="#FF0057B8"
+            android:pathData="M44,37h22v8h-22z" />
+        <path android:fillColor="#FFC5CCD6"
+            android:pathData="M44,50h22v3h-22zM44,56h16v3h-16z" />
+    </group>
+    <!-- Haken-Badge -->
     <path android:fillColor="#FF2E7D32"
-        android:pathData="M36,30h32a4,4 0,0 1,4 4v40a4,4 0,0 1,-4 4h-32a4,4 0,0 1,-4 -4v-40a4,4 0,0 1,4 -4z" />
+        android:pathData="M70,69m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0" />
     <path android:fillColor="#FFFFFFFF"
-        android:pathData="M42,36h28a4,4 0,0 1,4 4v38a4,4 0,0 1,-4 4h-28a4,4 0,0 1,-4 -4v-38a4,4 0,0 1,4 -4z" />
-    <path android:fillColor="#FFFB8C00"
-        android:pathData="M48,46h16l-6,9a7,7 0,1 1,-9 9l3,-2a3.5,3.5 0,1 0,4 -5l-2,-1 5,-7h-11z" />
+        android:pathData="M64.5,69.2l2.4,-2.4l2.7,2.7l6,-6l2.4,2.4l-8.4,8.4z" />
 </vector>

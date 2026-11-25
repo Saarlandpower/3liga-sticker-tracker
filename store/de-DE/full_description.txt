@@ -1,0 +1,37 @@
+Behalte den Überblick über dein Sticker-Sammelalbum – ohne Zettelwirtschaft.
+
+Halte die Rückseite eines Stickers vor die Kamera und tippe auf den Auslöser: Sticker-Tracker liest die Nummer und zählt sie in deinem Album mit. Du siehst sofort, ob der Sticker neu ist oder doppelt.
+
+📷 SCANNEN STATT TIPPEN
+• Nummer wird per Texterkennung direkt auf dem Gerät gelesen – auch offline
+• Gezählt wird erst, wenn die Nummer über mehrere Bilder eindeutig erkannt wurde
+• Rückmeldung per Ton und Vibration: „#125 – NEU“ oder „#125 – doppelt (jetzt 3x)“
+• Jeder Scan lässt sich rückgängig machen
+• Taschenlampe für schlechtes Licht
+• Alternativ: Nummernblock für mehrere Nummern auf einmal (z. B. „12, 45, 45, 201“ oder „45-48“)
+
+📒 DEIN ALBUM AUF EINEN BLICK
+• Fortschritt in Prozent, fehlende und doppelte Sticker
+• Fortschritt pro Verein bzw. Albumseite
+• Album als Kachelraster: grau = fehlt, grün = vorhanden, orange = doppelt
+• Tippen zählt +1, langes Drücken öffnet Details zum Bearbeiten
+• Filter nach Fehlenden, Doppelten, Verein und Kategorie; Suche nach Nummer oder Name
+
+🔁 TAUSCHEN
+• Tauschliste per WhatsApp, Signal & Co. teilen – fortlaufende Nummern werden zu Bereichen zusammengefasst („Fehlen: 3, 17, 45-48“)
+• QR-Tausch: Dein Tauschpartner scannt deinen Code und sieht sofort passende Tauschpaare
+• Tausch mit einem Tipp verbuchen
+
+⚽ CHECKLISTE INKLUSIVE
+Mit fertiger Checkliste für das Sammelalbum zur 3. Liga 2026/27 (423 Sticker, nach Vereinen sortiert). Eigene Checklisten für andere Alben lassen sich als JSON- oder CSV-Datei importieren – deine bisherigen Zählungen bleiben dabei erhalten.
+
+🔒 DEINE DATEN BLEIBEN BEI DIR
+• Kein Konto, keine Anmeldung, keine Werbung
+• Die App hat keinen Internetzugriff – alles bleibt auf deinem Gerät
+• Kamerabilder werden nur live ausgewertet und nicht gespeichert
+• Sicherung als Datei exportieren und auf einem neuen Handy wieder importieren
+
+🎨 DESIGN
+Dunkles oder helles Design, wahlweise im Farbschema Blau-Schwarz-Gelb.
+
+Hinweis: Sticker-Tracker ist eine inoffizielle Fan-App und steht in keiner Verbindung zu Panini, dem DFB oder den genannten Vereinen. Alle Marken- und Vereinsnamen gehören ihren jeweiligen Inhabern.
