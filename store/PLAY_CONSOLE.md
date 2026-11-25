@@ -10,10 +10,10 @@
 | Feature-Grafik 1024 × 500 | `store/grafiken/feature-1024x500.png` |
 | Screenshots (mind. 2, Smartphone) | selbst auf dem Gerät aufnehmen: Übersicht, Album, Scannen, Tauschen |
 | Kategorie | Bücher & Nachschlagewerke oder Lifestyle (Vorschlag: Lifestyle) |
-| Datenschutzerklärung | URL zu `docs/datenschutz.md`, z. B. über GitHub Pages |
+| Datenschutzerklärung | `https://saarlandpower.github.io/3liga-sticker-tracker/datenschutz.html` |
 
 ## App-Inhalte
-- **Datenschutzerklärung:** URL eintragen (Kontaktdaten in `docs/datenschutz.md` vorher ausfüllen!)
+- **Datenschutzerklärung:** `https://saarlandpower.github.io/3liga-sticker-tracker/datenschutz.html` (GitHub Pages: Branch `main`, Ordner `/docs`)
 - **Werbung:** Nein, die App enthält keine Werbung
 - **App-Zugriff:** Alle Funktionen ohne Anmeldung verfügbar
 - **Einstufung (IARC-Fragebogen):** Kategorie „Dienstprogramm/Produktivität“; alle Fragen zu Gewalt, Glücksspiel,
