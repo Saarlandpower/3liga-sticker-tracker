@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import de.dritteliga.stickertracker.data.ColorTheme
 import de.dritteliga.stickertracker.data.ThemeMode
@@ -39,6 +41,20 @@ private val Light = lightColorScheme(
     secondary = Color(0xFFEF6C00),
     secondaryContainer = Color(0xFFFFE0B2),
 )
+
+/** Farben der Fortschrittsbalken; null = Standardwert der jeweiligen Stelle. */
+data class ProgressColors(
+    val bar: Color,
+    val barComplete: Color,
+    /** Spur im großen Fortschritts-Kasten */
+    val cardTrack: Color?,
+    /** Spur der Balken pro Verein/Kategorie */
+    val listTrack: Color?,
+)
+
+val LocalProgressColors = staticCompositionLocalOf {
+    ProgressColors(bar = StatusColors.Owned, barComplete = StatusColors.Duplicate, cardTrack = null, listTrack = null)
+}
 
 /** Vereinsfarben des 1. FC Saarbrücken: Blau, Schwarz, Gelb. */
 object FcsColors {
@@ -102,5 +118,17 @@ fun StickerTheme(mode: ThemeMode, colorTheme: ColorTheme = ColorTheme.STANDARD, 
         ColorTheme.STANDARD -> if (dark) Dark else Light
         ColorTheme.FCS -> if (dark) FcsDark else FcsLight
     }
-    MaterialTheme(colorScheme = scheme, content = content)
+    val progress = when (colorTheme) {
+        ColorTheme.STANDARD -> ProgressColors(StatusColors.Owned, StatusColors.Duplicate, null, null)
+        // FCS: blaue Spur, gelber Fortschritt
+        ColorTheme.FCS -> ProgressColors(
+            bar = FcsColors.Yellow,
+            barComplete = FcsColors.Yellow,
+            cardTrack = FcsColors.Blue,
+            listTrack = if (dark) FcsColors.Blue else Color(0xFFB9CFF2),
+        )
+    }
+    CompositionLocalProvider(LocalProgressColors provides progress) {
+        MaterialTheme(colorScheme = scheme, content = content)
+    }
 }
