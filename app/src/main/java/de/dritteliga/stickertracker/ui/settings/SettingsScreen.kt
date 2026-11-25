@@ -2,6 +2,16 @@ package de.dritteliga.stickertracker.ui.settings
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.Color
+import de.dritteliga.stickertracker.data.ColorTheme
+import de.dritteliga.stickertracker.ui.theme.FcsColors
+import de.dritteliga.stickertracker.ui.theme.StatusColors
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -153,6 +163,23 @@ fun SettingsScreen(
                 }
             }
 
+            Text(
+                "Farbschema",
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(start = 16.dp, top = 12.dp, bottom = 4.dp),
+            )
+            Row(Modifier.padding(horizontal = 16.dp)) {
+                ColorTheme.entries.forEach { theme ->
+                    FilterChip(
+                        selected = settings.colorTheme == theme,
+                        onClick = { vm.updateSettings { it.copy(colorTheme = theme) } },
+                        label = { Text(theme.label) },
+                        leadingIcon = { ColorSwatches(theme) },
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                }
+            }
+
             HorizontalDivider(Modifier.padding(top = 8.dp))
             SectionTitle("Gefahrenzone")
             SettingsAction(Icons.Filled.RestartAlt, "Alle Anzahlen zurücksetzen", "Setzt jeden Sticker auf „fehlt“") {
@@ -256,6 +283,25 @@ fun SettingsScreen(
             },
             dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text("Abbrechen") } },
         )
+    }
+}
+
+/** Kleine Farbpunkte als Vorschau eines Farbschemas. */
+@Composable
+private fun ColorSwatches(theme: ColorTheme) {
+    val colors = when (theme) {
+        ColorTheme.STANDARD -> listOf(StatusColors.Owned, StatusColors.Duplicate, Color(0xFF121417))
+        ColorTheme.FCS -> listOf(FcsColors.Blue, FcsColors.Black, FcsColors.Yellow)
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy((-4).dp)) {
+        colors.forEach { c ->
+            Box(
+                Modifier
+                    .size(14.dp)
+                    .border(1.dp, Color.White.copy(alpha = 0.6f), CircleShape)
+                    .background(c, CircleShape),
+            )
+        }
     }
 }
 

@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch { repository.ensureSeeded() }
         setContent {
             val settings by settingsStore.settings.collectAsStateWithLifecycle()
-            StickerTheme(settings.themeMode) {
+            StickerTheme(settings.themeMode, settings.colorTheme) {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     AppNavigation()
                 }

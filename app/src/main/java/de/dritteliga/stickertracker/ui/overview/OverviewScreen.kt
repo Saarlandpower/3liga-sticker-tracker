@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.dritteliga.stickertracker.ui.album.AlbumFilter
 import de.dritteliga.stickertracker.ui.components.AppScaffold
 import de.dritteliga.stickertracker.ui.components.ManualInputDialog
+import de.dritteliga.stickertracker.ui.theme.LocalProgressColors
 import de.dritteliga.stickertracker.ui.theme.StatusColors
 
 @Composable
@@ -156,8 +158,8 @@ private fun ProgressCard(state: OverviewState) {
                 progress = { state.summary.progress },
                 modifier = Modifier.fillMaxWidth().height(12.dp),
                 strokeCap = StrokeCap.Round,
-                color = StatusColors.Owned,
-                trackColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                color = LocalProgressColors.current.bar,
+                trackColor = LocalProgressColors.current.cardTrack ?: MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
                 drawStopIndicator = {},
             )
         }
@@ -208,7 +210,8 @@ private fun GroupRow(g: GroupProgress, onClick: (() -> Unit)?) {
             progress = { g.summary.progress },
             modifier = Modifier.fillMaxWidth().height(6.dp),
             strokeCap = StrokeCap.Round,
-            color = if (g.summary.missing == 0) StatusColors.Duplicate else StatusColors.Owned,
+            color = if (g.summary.missing == 0) LocalProgressColors.current.barComplete else LocalProgressColors.current.bar,
+            trackColor = LocalProgressColors.current.listTrack ?: ProgressIndicatorDefaults.linearTrackColor,
             drawStopIndicator = {},
         )
     }

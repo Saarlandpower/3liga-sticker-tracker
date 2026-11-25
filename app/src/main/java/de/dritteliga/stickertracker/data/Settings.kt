@@ -10,6 +10,12 @@ import javax.inject.Singleton
 
 enum class ThemeMode(val label: String) { SYSTEM("System"), DUNKEL("Dunkel"), HELL("Hell") }
 
+/** Farbschema der App – unabhängig von Hell/Dunkel. */
+enum class ColorTheme(val label: String) {
+    STANDARD("Standard"),
+    FCS("1. FC Saarbrücken"),
+}
+
 enum class ScanMode(val label: String, val description: String) {
     MANUELL("Auslöser", "Zählt nur, wenn du auf den Auslöser oder ins Bild tippst"),
     AUTOMATISCH("Automatisch", "Zählt jede stabil erkannte Nummer selbstständig (Serienmodus)"),
@@ -18,6 +24,7 @@ enum class ScanMode(val label: String, val description: String) {
 data class AppSettings(
     val checklistName: String = "",
     val themeMode: ThemeMode = ThemeMode.DUNKEL,
+    val colorTheme: ColorTheme = ColorTheme.STANDARD,
     val sound: Boolean = true,
     val vibration: Boolean = true,
     val scanMode: ScanMode = ScanMode.MANUELL,
@@ -33,6 +40,7 @@ class SettingsStore @Inject constructor(@ApplicationContext context: Context) {
     private fun read() = AppSettings(
         checklistName = prefs.getString(KEY_NAME, "").orEmpty(),
         themeMode = runCatching { ThemeMode.valueOf(prefs.getString(KEY_THEME, null) ?: "") }.getOrDefault(ThemeMode.DUNKEL),
+        colorTheme = runCatching { ColorTheme.valueOf(prefs.getString(KEY_COLOR_THEME, null) ?: "") }.getOrDefault(ColorTheme.STANDARD),
         sound = prefs.getBoolean(KEY_SOUND, true),
         vibration = prefs.getBoolean(KEY_VIBRATION, true),
         scanMode = runCatching { ScanMode.valueOf(prefs.getString(KEY_SCAN_MODE, null) ?: "") }.getOrDefault(ScanMode.MANUELL),
@@ -47,6 +55,7 @@ class SettingsStore @Inject constructor(@ApplicationContext context: Context) {
         prefs.edit()
             .putString(KEY_NAME, new.checklistName)
             .putString(KEY_THEME, new.themeMode.name)
+            .putString(KEY_COLOR_THEME, new.colorTheme.name)
             .putBoolean(KEY_SOUND, new.sound)
             .putBoolean(KEY_VIBRATION, new.vibration)
             .putString(KEY_SCAN_MODE, new.scanMode.name)
@@ -57,6 +66,7 @@ class SettingsStore @Inject constructor(@ApplicationContext context: Context) {
     private companion object {
         const val KEY_NAME = "checklist_name"
         const val KEY_THEME = "theme"
+        const val KEY_COLOR_THEME = "color_theme"
         const val KEY_SOUND = "sound"
         const val KEY_VIBRATION = "vibration"
         const val KEY_SEEDED = "seeded"

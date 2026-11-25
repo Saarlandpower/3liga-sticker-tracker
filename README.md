@@ -16,7 +16,7 @@ jederzeit, welche Sticker du hast, welche fehlen und welche doppelt sind. Gescan
 | **Album** | Alle Nummern als farbcodierte Kacheln: grau = fehlt, grün = vorhanden, orange mit Badge = doppelt. **Tippen = +1** (mit „Rückgängig“), **lange drücken** öffnet ein Detail mit +/- und Bearbeiten (Name, Verein, Kategorie). Tabs: Alle · Fehlend · Doppelte · Nach Verein · Kategorie. Dazu kommen Filter nach Verein/Kategorie und eine Suche nach Nummer, Spielername oder Verein. |
 | **Scannen** | Kamera-Vorschau mit Rahmen. Die Nummer auf der Rückseite wird per ML Kit erkannt und auf Knopfdruck gezählt (optional automatisch im Serienmodus), mit Vibration und Ton. Ein Overlay zeigt „#125 – NEU“ (grün) oder „#125 – doppelt (jetzt 3x)“ (orange). Dazu gibt es eine Sitzungsliste mit Rückgängig pro Eintrag und Taschenlampe. Als Fallback dient ein Nummernblock. |
 | **Tauschen** | „Tauschliste teilen“ über das Android-Share-Sheet, z. B. `Fehlen (6): 3, 17, 45-48` / `Doppelt (5): 12 (2x), 88-89, S1`. Mit dem eigenen QR-Code scannt ein zweites Handy deine Liste und sieht sofort die passenden Tauschpaare. Der Tausch lässt sich auf Wunsch direkt buchen. |
-| **Einstellungen** | Checkliste importieren (JSON/CSV) oder eine Platzhalter-Liste 1…N erzeugen. Außerdem: Vereine umbenennen und ihnen Nummern zuordnen, den Bestand als JSON exportieren/importieren, Ton/Vibration und Design einstellen. |
+| **Einstellungen** | Checkliste importieren (JSON/CSV) oder eine Platzhalter-Liste 1…N erzeugen. Außerdem: Vereine umbenennen und ihnen Nummern zuordnen, den Bestand als JSON exportieren/importieren, Ton/Vibration, Hell/Dunkel und das Farbschema (Standard oder „1. FC Saarbrücken“ in Blau-Schwarz-Gelb) einstellen. |
 
 ### Scan-Logik
 
