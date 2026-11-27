@@ -9,6 +9,9 @@ jederzeit, welche Sticker du hast, welche fehlen und welche doppelt sind. Gescan
 * Kein Login, keine Internetpflicht, keine Internet-Berechtigung. Alle Daten bleiben auf dem Gerät.
 * Paket-ID: `de.saarlandpower.stickertracker`
 
+> **iPhone?** Es gibt eine Web-App mit denselben Funktionen: https://saarlandpower.github.io/3liga-sticker-tracker/
+> (siehe [`web/README.md`](web/README.md)).
+
 > Inoffizielle Fan-App. Keine Verbindung zu Panini, dem DFB oder den Vereinen. Alle Marken- und Vereinsnamen gehören
 > ihren jeweiligen Inhabern.
 

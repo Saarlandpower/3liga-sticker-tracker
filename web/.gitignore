@@ -1,0 +1,6 @@
+node_modules/
+dist/
+# von scripts/copy-assets.mjs erzeugt
+public/ocr/
+public/checklist.json
+public/datenschutz.html

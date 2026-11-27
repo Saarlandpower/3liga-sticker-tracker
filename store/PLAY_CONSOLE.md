@@ -13,7 +13,7 @@
 | Datenschutzerklärung | `https://saarlandpower.github.io/3liga-sticker-tracker/datenschutz.html` |
 
 ## App-Inhalte
-- **Datenschutzerklärung:** `https://saarlandpower.github.io/3liga-sticker-tracker/datenschutz.html` (GitHub Pages: Branch `main`, Ordner `/docs`)
+- **Datenschutzerklärung:** `https://saarlandpower.github.io/3liga-sticker-tracker/datenschutz.html` (wird zusammen mit der Web-App über die Action `pages.yml` veröffentlicht; Pages-Quelle: „GitHub Actions“)
 - **Werbung:** Nein, die App enthält keine Werbung
 - **App-Zugriff:** Alle Funktionen ohne Anmeldung verfügbar
 - **Einstufung (IARC-Fragebogen):** Kategorie „Dienstprogramm/Produktivität“; alle Fragen zu Gewalt, Glücksspiel,
